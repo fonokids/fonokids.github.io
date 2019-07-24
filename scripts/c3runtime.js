@@ -551,6 +551,18 @@ self["C3_Shaders"] = {};
 
 "use strict";C3.Plugins.Audio.Exps={Duration(b){const c=this._GetFirstAudioStateByTag(b);return c?c["duration"]:0},PlaybackTime(b){const c=this._GetFirstAudioStateByTag(b);return c?c["playbackTime"]:0},PlaybackRate(b){const c=this._GetFirstAudioStateByTag(b);return c?c["playbackRate"]:0},Volume(b){const c=this._GetFirstAudioStateByTag(b);return c?this.LinearToDb(c["volume"]):0},MasterVolume(){return this.LinearToDb(this._masterVolume)},EffectCount(a){return this._effectCount.get(a.toLowerCase())||0},AnalyserFreqBinCount(a,b){const c=this.GetAnalyserData(a,Math.floor(b));return c?c["binCount"]:0},AnalyserFreqBinAt(a,b,c){var d=Math.floor;const e=this.GetAnalyserData(a,d(b));return e?(c=d(c),0>c||c>=e["binCount"]?0:e["freqBins"][c]):0},AnalyserPeakLevel(a,b){const c=this.GetAnalyserData(a,Math.floor(b));return c?c["peak"]:0},AnalyserRMSLevel(a,b){const c=this.GetAnalyserData(a,Math.floor(b));return c?c["rms"]:0},SampleRate(){return this._sampleRate},CurrentTime(){return self["C3_GetAudioContextCurrentTime"]?self["C3_GetAudioContextCurrentTime"]():performance.now()/1e3}};
 
+"use strict";C3.Behaviors.wrap=class extends C3.SDKBehaviorBase{constructor(a){super(a)}Release(){super.Release()}};
+
+"use strict";C3.Behaviors.wrap.Type=class extends C3.SDKBehaviorTypeBase{constructor(a){super(a)}Release(){super.Release()}OnCreate(){}};
+
+"use strict";{const a=new C3.Rect;C3.Behaviors.wrap.Instance=class extends C3.SDKBehaviorInstanceBase{constructor(a,b){super(a),this._mode=0,b&&(this._mode=b[0]),this._StartTicking()}Release(){super.Release()}SaveToJson(){return{"m":this._mode}}LoadFromJson(a){this._mode=a["m"]}Tick(){const b=this._inst.GetWorldInfo(),c=b.GetLayer(),d=c.GetLayout(),e=b.GetBoundingBox();0===this._mode?a.set(0,0,d.GetWidth(),d.GetHeight()):a.copy(c.GetViewport()),e.getRight()<a.getLeft()?(b.SetX(a.getRight()-1+(b.GetX()-e.getLeft())),b.SetBboxChanged()):e.getLeft()>a.getRight()?(b.SetX(a.getLeft()+1-(e.getRight()-b.GetX())),b.SetBboxChanged()):e.getBottom()<a.getTop()?(b.SetY(a.getBottom()-1+(b.GetY()-e.getTop())),b.SetBboxChanged()):e.getTop()>a.getBottom()&&(b.SetY(a.getTop()+1-(e.getBottom()-b.GetY())),b.SetBboxChanged())}GetPropertyValueByIndex(a){return a===0?this._mode:void 0}SetPropertyValueByIndex(a,b){a===0?this._mode=b:void 0}}}
+
+"use strict";C3.Behaviors.wrap.Cnds={};
+
+"use strict";C3.Behaviors.wrap.Acts={};
+
+"use strict";C3.Behaviors.wrap.Exps={};
+
 "use strict"
 self.C3_GetObjectRefTable = function () {
 	return [
@@ -560,11 +572,16 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.Keyboard,
 		C3.Plugins.Sprite,
 		C3.Plugins.Audio,
+		C3.Behaviors.wrap,
 		C3.Plugins.Touch.Cnds.OnTapGestureObject,
 		C3.Plugins.System.Acts.GoToLayout,
 		C3.Plugins.Audio.Acts.Stop,
 		C3.Plugins.System.Cnds.OnLayoutStart,
 		C3.Plugins.Audio.Acts.Play,
+		C3.Plugins.System.Cnds.EveryTick,
+		C3.Plugins.Sprite.Acts.SetX,
+		C3.Plugins.Sprite.Exps.X,
+		C3.Plugins.System.Exps.dt,
 		C3.Plugins.Touch.Cnds.OnTouchObject,
 		C3.Plugins.Sprite.Acts.SetVisible
 	];
@@ -668,6 +685,11 @@ self.C3_GetObjectRefTable = function () {
 	self.C3_ExpressionFuncs = [
 		() => "Music",
 		() => 0,
+		p => {
+			const n0 = p._GetNode(0);
+			const f1 = p._GetNode(1).GetBoundMethod();
+			return () => (n0.ExpObject() - (20 * f1()));
+		},
 		() => "Select",
 		() => "LevelComplete"
 	];
