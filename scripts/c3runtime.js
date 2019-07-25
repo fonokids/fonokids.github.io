@@ -583,7 +583,9 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.Sprite.Exps.X,
 		C3.Plugins.System.Exps.dt,
 		C3.Plugins.Touch.Cnds.OnTouchObject,
-		C3.Plugins.Sprite.Acts.SetVisible
+		C3.Plugins.Sprite.Acts.SetVisible,
+		C3.Plugins.Sprite.Acts.AddInstanceVar,
+		C3.Plugins.Sprite.Cnds.CompareInstanceVar
 	];
 };
 
@@ -691,7 +693,9 @@ self.C3_GetObjectRefTable = function () {
 			return () => (n0.ExpObject() - (20 * f1()));
 		},
 		() => "Select",
-		() => "LevelComplete"
+		() => "LevelComplete",
+		() => 1,
+		() => 5
 	];
 }
 
